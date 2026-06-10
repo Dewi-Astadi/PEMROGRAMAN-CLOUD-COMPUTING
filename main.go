@@ -8,6 +8,7 @@ import (
 	"pcc/controllers"
 	"pcc/fungsi"
 	"pcc/models"
+	wa "pcc/whatsapp"
 
 	jwtV3 "github.com/appleboy/gin-jwt/v3"
 	"github.com/gin-gonic/gin"
@@ -101,5 +102,15 @@ func main() {
 	auth.GET("/drive", controllers.DriveTampil)
 	auth.GET("/drive/:id", controllers.DriveUnduh)
 
-	r.Run(":8111")
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(404, gin.H{
+			"status": false,
+			"pesan":  "Route Tidak Ditemukan",
+		})
+	})
+
+	port := os.Getenv("PORT")
+	go r.Run(":" + port)
+
+	wa.KonekWa()
 }
